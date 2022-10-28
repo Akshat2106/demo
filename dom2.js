@@ -1,4 +1,5 @@
 var items=document.getElementsByClassName('list-group-item');
-console.log(items[2]);
 items[2].style.backgroundcolor='yellow';
-items[2].style.fontweight='bold';
+for(var i=0;i<items.length;i++){
+    items[i].style.fontweight='bold';
+}
