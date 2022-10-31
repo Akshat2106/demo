@@ -1,0 +1,67 @@
+<html>
+  <body>
+    <form onsubmit="tolocalstorage(event)">
+      <label>Name</label><br>
+      <input id="username" type="text" name="username"/><br>
+      <label>Email</label><br>
+      <input id="email" type="email" name="emailId"/><br>
+      <label>phone number</label><br>
+      <input id="phonenumber" type="tel" name="phonenumber"/><br>
+      <button>Submit</button><br>
+    </form>
+    <ul id="listofusers"></ul>
+    <script>
+        function tolocalstorage(event){
+    event.preventDefault();
+    const name=event.target.username.value;
+    const email=event.target.emailId.value;
+    const phonenumber=event.target.phonenumber.value;
+    localStorage.setItem('name', name);
+    localStorage.setItem('email', email);
+    localStorage.setItem('phonenumber', phonenumber);
+ 
+    const obj={name:name,email:email,phonenumber:phonenumber}
+    localStorage.setItem('userdetails',JSON.stringify(obj));
+    showUser(obj);    
+}
+window.addEventListener('DOMContentLoaded',() =>{
+    const localStorageobj=localStorage;
+    const localStoragekeys=Object.keys(localStorageobj)
+
+    for(var i=0; i<localStoragekeys.length;i++){
+        const key=localStoragekeys[i];
+        const userDetailsString=localStorageobj[key];
+        const userDetailsobj=JSON.parse(userDetailsString);
+        showNewUserOnScreen(userDetailsobj);
+    }
+    function showNewUserOnScreen(user){
+        document.getElementById('email').value='';
+        document.getElementById('username').value='';
+        document.getElementById('phonenumber').value='';
+        
+        if(localStorage.getItem(user.email)!==null){
+            removeUserFromScreen(user.email)
+        }
+        const parentNode=document.getElementById('listofusers');
+        const childHtml=`<li id=${user.email}> ${user.name}
+        <button onclick=deleteUser('${user.email}')> Delete</button>
+        <button onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}')>Edit</button>
+        </li>`
+        parentNode.innerHTML=parentNode.innerHTML+childHtml;
+    }
+    function editUserDetails(emailId,name,phonenumber){
+     document.getElementById('email').value=emailId; 
+     document.getElementById('username').value=name; 
+     document.getElementById('phonenumber').value=phonenumber; 
+      
+     deleteUser(emailId);
+    }
+    function deleteUser(emailId){
+        localStorage.removeItem(emailId);
+        removeUserFromScreen(emailId);
+    }
+});
+
+    </script>
+  </body>
+</html>
