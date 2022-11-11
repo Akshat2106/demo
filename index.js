@@ -27,6 +27,7 @@
 //     console.log(x*y);
 // }
 
+
 // let multiplyByTwo=multiply.bind(this,2);
 // multiplyByTwo(3);
 // let multiplyByThree=multiply.bind(this,2);
