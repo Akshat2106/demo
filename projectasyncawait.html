@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <header style="color: maroon;font-size: 400%;"> Expense Tracker</header>
+</head>
+<body>
+    <label>Expense Amount:</label><input type="text" id="1">
+    <label>Choose Description:</label><input type="text" id="2">
+    <label>Choose a Category:</label>
+    <select name="typeofexpense" id="3">
+        <option>Fuel</option>
+        <option>Food</option>
+        <option>EMI</option>
+        <option>Entertainment</option>
+        <option>Bills</option>
+    </select>
+    <button id="addBtn" onclick="addFunction()">Add Expenses</button>
+    <ul id="addList"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script> 
+
+    <script>
+
+        //Function to create new entries   
+
+        function addFunction () {
+            
+            let firstValue = document.getElementById('1').value;
+            let secondValue = document.getElementById('2').value;
+            let thirdValue = document.getElementById('3').value;
+ 
+            const obj =  {
+                Amount : firstValue ,
+                Description : secondValue ,
+                Category : thirdValue 
+            };
+
+
+                //Now posting it in crudcrud 
+            const sendPostRequest = async () => {
+                try {
+                    const resp = await axios.post("https://crudcrud.com/api/7e0d9930052d4099b95863448145e30f/addExpenseDetails" , obj);
+
+                    //console.log(resp.data); // Just For Self Analysis
+
+                    displayInputFromUser(resp.data);
+
+
+                } catch (err) {
+                    console.log(err);
+
+                }
+            };
+
+            sendPostRequest();
+
+        }  
+
+        window.addEventListener("DOMContentLoaded" , getRequest);
+
+function getRequest () {
+    const sendGetRequest = async () => {
+        try {
+            const resp = await axios.get("https://crudcrud.com/api/7e0d9930052d4099b95863448145e30f/addExpenseDetails");
+               
+            for(let i=0;i<resp.data.length;i++) {
+                displayInputFromUser(resp.data[i]);
+            };
+
+        } catch {
+            console.log(error);
+        }
+    };
+
+    sendGetRequest();
+
+};
+
+
+
+
+        //Function for Dispalying User Expense
+
+        function displayInputFromUser (user) {
+
+            //Creating new list to displaying information on the page.
+            let ul = document.getElementById('addList');
+            let newList = document.createElement('li');
+            ul.appendChild(newList);
+
+            let dataFromUser = `${user.Amount} - ${user.Description} - ${user.Category} `;
+            newList.innerText = dataFromUser;
+
+
+
+            // Delete Button
+            let deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.innerText = 'Delete Expenses';
+            newList.appendChild(deleteBtn);
+            deleteBtn.addEventListener('click' , deleteFunction);
+
+
+            
+
+            //deleteExpense Function
+
+            function deleteFunction () {
+
+                const sendDeleteRequest = async () => {
+                    try {
+                        const resp = await axios.delete(`https://crudcrud.com/api/7e0d9930052d4099b95863448145e30f/addExpenseDetails/${user._id}`);
+                        ul.removeChild(newList);
+
+                    } catch (err) {
+                        console.log(err);
+                    }
+                };
+                sendDeleteRequest();
+            };
+
+            //Edit Button
+            let editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.innerText = 'Edit Expenses';
+            newList.appendChild(editBtn);
+            editBtn.addEventListener('click' , editFunction);
+
+            //editExpense Function
+            function editFunction () {
+                document.getElementById('1').value = user.Amount;
+                document.getElementById('2').value = user.Description;
+                document.getElementById('3').value = user.Category;
+
+                deleteFunction();
+
+            }
+        }  
+    </script>
+</body>
+</html>
